@@ -333,8 +333,8 @@ class ZeroTokenDropout(nn.Module):
         # x: (batch_size, seq_len, dim)
         if self.training and self.p > 0:
             zero_mask = torch.full_like(x[:, :, 0], self.p).bernoulli().bool()
-            # Zero-out the masked tokens
-            x[zero_mask, :] = 0
+            # Zero-out the masked tokens per sequence position
+            x = x.masked_fill(zero_mask.unsqueeze(-1), 0)
         return x
     
 class CrossAttention(nn.Module):
